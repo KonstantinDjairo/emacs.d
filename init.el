@@ -4,6 +4,51 @@
 ;; find . -name "*.elc" -type f | xargs rm -f
 ;; --------------------------------------------
 
+(load-file "/home/ronnie/.emacs.d/typing/typing-speed.el")
+(load-file "/home/ronnie/.emacs.d/typing/key-guide.el")
+(turn-on-typing-speed)
+(defun enable-typing-speed-mode ()
+  "Enable typing-speed-mode in the current buffer."
+  (unless (bound-and-true-p typing-speed-mode)
+    (typing-speed-mode)))
+
+(defun setup-typing-speed-for-buffer ()
+  "Setup typing-speed-mode for the current buffer when it's created."
+  (add-hook 'after-make-frame-functions 'enable-typing-speed-mode)
+  (add-hook 'buffer-list-update-hook 'enable-typing-speed-mode))
+
+(setup-typing-speed-for-buffer)
+
+(setq warning-minimum-level :emergency) 
+
+
+
+
+
+(load-file "/home/ronnie/.emacs.d/typing/wakib-keys.el")
+(wakib-keys 0)
+
+
+;; japanese fonts with anti-alising
+(defun enable-antialiasing ()
+  "Enable antialiasing in Emacs by customizing faces with the 'PlemolJP' font."
+  (interactive)
+  (custom-set-faces
+   '(default ((t (:height 120 :foundry "ADBO" :family "PlemolJP" :antialias t))))
+   '(font-lock-comment-face ((t (:foreground "dark green" :weight normal :slant italic :antialias t))))
+   '(font-lock-keyword-face ((t (:weight bold :antialias t))))
+   '(font-lock-string-face ((t (:foreground "dark magenta" :antialias t))))
+   ;; Add more face customizations as needed
+   )
+  (message "Antialiasing enabled with 'PlemolJP' font for selected faces."))
+
+(enable-antialiasing)
+(global-set-key [f9] 'enable-antialiasing)
+;; ----------------------------
+
+
+
+
 (load-file "/home/ronnie/.emacs.d/elisp-bug-hunter/bug-hunter.el")
 
 ;; /home/ronnie/.emacs.d/telega-misc/visual-fill-column.el
@@ -15,9 +60,30 @@
 (global-set-key [f8] 'neotree-toggle)
 
 
+
+;; clean interface
+(if (fboundp 'menu-bar-mode)   (menu-bar-mode   -1))
+(if (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+
+
+
 ;;(load-file "/home/ronnie/.emacs.d/colophon/main.el")
 
-(require 'use-package)
+
+(require 'package)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t))
+
 
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
@@ -39,8 +105,28 @@
 (require 'quelpa-use-package)
 
 
+;; theme
+(use-package tron-legacy-theme
+  :config
+  (setq tron-legacy-theme-vivid-cursor t)
+  (load-theme 'tron-legacy t))
 
 
+(add-to-list 'load-path "/home/ronnie/.emacs.d/dashboard/emacs-dashboard/")
+(require 'dashboard)
+(dashboard-setup-startup-hook)
+
+(enable-antialiasing)
+
+;; Set the title
+(setq dashboard-banner-logo-title "いらっしゃいませ~!")
+;; Set the banner
+(setq dashboard-startup-banner "/home/ronnie/.emacs.d/dashboard/cute_girl.png")
+;; Content is not centered by default. To center, set
+(setq dashboard-center-content t)
+
+;; To disable shortcut "jump" indicators for each section, set
+(setq dashboard-show-shortcuts nil)
 
 ;; planning
 ;;(load-file "/home/ronnie/.emacs.d/my-org-roam-elisp-code/org-hyperscheduler/org-hyperscheduler.el")
@@ -156,8 +242,7 @@ Show only the part after 'pdf'."
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/spaceway/")
 (load-theme 'modus-operandi t)
 (set-face-attribute 'default nil :height 90)
-
-
+(enable-antialiasing)
 ;; 
 (require 'package)
 (add-to-list 'load-path "~/.emacs.d/use-package/use-package/")
@@ -172,7 +257,7 @@ Show only the part after 'pdf'."
 ;; https://github.com/kuanyui/copy-as-org-mode
 (require 'org)
 
-(require 'org-persist)
+(quelpa 'org-persist)
 
 (require 'org-capture)
 
@@ -237,7 +322,6 @@ Show only the part after 'pdf'."
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
-
 
 ;;----------------------------------------------------------------
 
@@ -362,12 +446,6 @@ This prevents overlapping themes; something I would rarely want."
 
 
 
-;; clean interface
-(if (fboundp 'menu-bar-mode)   (menu-bar-mode   -1))
-(if (fboundp 'tool-bar-mode)   (tool-bar-mode   -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-
 
 ;; Byte Compile All the emacs directory from command line
 ;; emacs --batch --eval '(byte-recompile-directory "~/.emacs.d")'
@@ -426,7 +504,7 @@ This prevents overlapping themes; something I would rarely want."
 (split-window-right)
 
 
-
+(enable-antialiasing)
 
 
 
@@ -483,8 +561,10 @@ This prevents overlapping themes; something I would rarely want."
 
 
 (setq telega-server-libs-prefix "/usr/local/")
-(require 'telega)
-
+;;
+;; temporary disabled, need to focus on what's within myself.
+;;(require 'telega)
+;;
 
 
 (when (display-graphic-p)
@@ -907,11 +987,6 @@ This prevents overlapping themes; something I would rarely want."
 
 
 
-;; theme
-;;(use-package tron-legacy-theme
-;;  :config
-;;  (setq tron-legacy-theme-vivid-cursor t)
-;;  (load-theme 'tron-legacy t))
 
 
 
@@ -1052,9 +1127,6 @@ This prevents overlapping themes; something I would rarely want."
 
 
 
-(set-face-attribute 'default nil :height 120)
-
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1133,9 +1205,6 @@ This prevents overlapping themes; something I would rarely want."
 
 (setq debug-on-error nil)
 
-
-;; always start vterm
-(vterm)
 
 
 (setq inhibit-compacting-font-caches t)
