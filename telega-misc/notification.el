@@ -2,6 +2,7 @@
 ;; (load-file "~/.emacs.d/telega-misc/notification.el") 
 ;;
 
+(defvar alert-default-style 'libnotify)
 (load-file "~/.emacs.d/telega-misc/alert.el")
 (require 'alert)
 (load-file "~/.emacs.d/telega-misc/telega_alert.el")
@@ -12,6 +13,5 @@
 ;; (alert "This is an alert" :title "My Alert") 
 ;;
 
-(defvar alert-default-style 'libnotify)
 
 (telega-alert-mode 1)
