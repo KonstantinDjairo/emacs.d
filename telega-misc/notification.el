@@ -1,3 +1,8 @@
+;; add this to your init.el
+;; (load-file "~/.emacs.d/telega-misc/notification.el") 
+;;
+
+
 (load-file "~/.emacs.d/telega-misc/alert.el")
 (load-file "~/.emacs.d/telega-misc/telega_alert.el")
 
