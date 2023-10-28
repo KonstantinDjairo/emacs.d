@@ -2,19 +2,16 @@
 ;; (load-file "~/.emacs.d/telega-misc/notification.el") 
 ;;
 
-
 (load-file "~/.emacs.d/telega-misc/alert.el")
+(require 'alert)
 (load-file "~/.emacs.d/telega-misc/telega_alert.el")
-
+(require 'telega-alert)
 ;; telega-alert-activation.el
 
-(setq alert-default-style 'libnotify)
+;; test
+;; (alert "This is an alert" :title "My Alert") 
+;;
 
-(defvar telega-alert-activation-enabled t)
+(defvar alert-default-style 'libnotify)
 
-(defun activate-telega-alert-mode ()
-  (when (and telega-alert-activation-enabled
-             (string-match-p "telega" (buffer-name)))
-    (telega-alert-mode 1)))
-
-(add-hook 'buffer-list-update-hook 'activate-telega-alert-mode)
+(telega-alert-mode 1)
